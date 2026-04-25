@@ -13,13 +13,13 @@ services:
       mountPath: /var/lib/mysql
       sizeGB: 1
     envVars:
-      - key: MYSQL_ROOT_PASSWORD
+      - key: MARIADB_ROOT_PASSWORD
         generateValue: true
-      - key: MYSQL_DATABASE
+      - key: MARIADB_DATABASE
         value: stocky_pos
-      - key: MYSQL_USER
+      - key: MARIADB_USER
         value: stocky_user
-      - key: MYSQL_PASSWORD
+      - key: MARIADB_PASSWORD
         generateValue: true
 
   # Application Laravel (Backend + Frontend)
@@ -68,17 +68,17 @@ services:
         fromService:
           name: stocky-db
           type: pserv
-          envVarKey: MYSQL_DATABASE
+          envVarKey: MARIADB_DATABASE
       - key: DB_USERNAME
         fromService:
           name: stocky-db
           type: pserv
-          envVarKey: MYSQL_USER
+          envVarKey: MARIADB_USER
       - key: DB_PASSWORD
         fromService:
           name: stocky-db
           type: pserv
-          envVarKey: MYSQL_PASSWORD
+          envVarKey: MARIADB_PASSWORD
 
       # PWA & WebPush
       - key: VAPID_PUBLIC_KEY
