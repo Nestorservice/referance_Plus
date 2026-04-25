@@ -7,8 +7,7 @@ services:
   - type: pserv
     name: stocky-db
     env: docker
-    repo: https://github.com/MariaDB/mariadb-docker.git
-    branch: master
+    dockerfilePath: ./Dockerfile.db
     plan: free
     disk:
       name: stocky-db-data
