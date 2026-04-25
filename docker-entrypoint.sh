@@ -46,6 +46,9 @@ mkdir -p /var/www/html/bootstrap/cache
 echo "==> Correction des permissions..."
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Donner à Apache le droit d'écrire dans le .env pour l'installeur Web
+chown www-data:www-data /var/www/html/.env 2>/dev/null || true
+chmod 664 /var/www/html/.env 2>/dev/null || true
 
 echo "==> Démarrage d'Apache..."
 exec apache2-foreground
