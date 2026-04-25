@@ -46,6 +46,7 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Installation des dépendances PHP et Node
 USER root
+RUN composer config audit.block-insecure false
 RUN composer install --no-dev --optimize-autoloader
 RUN npm ci && npm run production
 
