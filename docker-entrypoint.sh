@@ -23,9 +23,13 @@ if [ -z "$APP_KEY" ] || [[ ! "$APP_KEY" == base64:* ]]; then
     php artisan key:generate --force
 fi
 
-# Lancer les migrations (recréer toutes les tables depuis zéro)
+# Lancer les migrations (ajoute les nouvelles tables sans supprimer les données)
 echo "==> Exécution des migrations..."
-php artisan migrate:fresh --seed --force || echo "==> AVERTISSEMENT: Certaines migrations ont échoué. L'application va continuer."
+php artisan migrate --force || echo "==> AVERTISSEMENT: Certaines migrations ont échoué. L'application va continuer."
+
+# Réinitialiser le mot de passe admin pour être sûr
+echo "==> Réinitialisation du mot de passe admin..."
+php artisan tinker --execute="\$user = \App\Models\User::where('email', 'admin@example.com')->first(); if(\$user) { \$user->password = bcrypt('admin123'); \$user->save(); }" || true
 
 # Vider les caches
 echo "==> Nettoyage des caches..."
@@ -42,6 +46,9 @@ mkdir -p /var/www/html/storage/framework/views
 mkdir -p /var/www/html/storage/framework/cache
 mkdir -p /var/www/html/storage/logs
 mkdir -p /var/www/html/bootstrap/cache
+
+mkdir -p /var/www/html/storage/app/public
+touch /var/www/html/storage/app/public/installed
 
 echo "==> Correction des permissions..."
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
