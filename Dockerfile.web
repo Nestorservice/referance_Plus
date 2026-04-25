@@ -1,3 +1,13 @@
+# Stage 1: Build Frontend (PWA) avec Node 14 (Compatible avec l'ancien node-sass)
+FROM node:14 AS frontend
+WORKDIR /app
+# Désactivation du SSL strict car l'image Node 14 a des certificats racines obsolètes
+RUN npm config set strict-ssl false
+COPY . .
+RUN npm install --no-fund --no-audit
+RUN npm run production
+
+# Stage 2: Build Backend avec PHP 8.1
 FROM php:8.1-apache
 
 # Installation des dépendances système
@@ -12,9 +22,7 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libzip-dev \
     zip \
-    unzip \
-    nodejs \
-    npm
+    unzip
 
 # Nettoyage
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -33,8 +41,11 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copie du code source
+# Copie du code source backend
 COPY . /var/www/html/
+
+# Copie des assets frontend pré-compilés depuis le Stage 1
+COPY --from=frontend /app/public /var/www/html/public
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -44,11 +55,10 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Installation des dépendances PHP et Node
+# Installation des dépendances PHP
 USER root
 RUN composer config audit.block-insecure false
 RUN composer install --no-dev --optimize-autoloader
-RUN npm install --no-fund --no-audit && npm run production
 
 # Script de démarrage pour lancer les migrations puis Apache
 RUN echo '#!/bin/bash\nphp artisan migrate --force\napache2-foreground' > /usr/local/bin/start.sh
