@@ -36,6 +36,13 @@ php artisan view:clear
 # Lien symbolique pour le storage
 php artisan storage:link 2>/dev/null || true
 
+echo "==> Création des dossiers manquants..."
+mkdir -p /var/www/html/storage/framework/sessions
+mkdir -p /var/www/html/storage/framework/views
+mkdir -p /var/www/html/storage/framework/cache
+mkdir -p /var/www/html/storage/logs
+mkdir -p /var/www/html/bootstrap/cache
+
 echo "==> Correction des permissions..."
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
