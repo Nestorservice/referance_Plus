@@ -36,5 +36,9 @@ php artisan view:clear
 # Lien symbolique pour le storage
 php artisan storage:link 2>/dev/null || true
 
+echo "==> Correction des permissions..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 echo "==> Démarrage d'Apache..."
 exec apache2-foreground
