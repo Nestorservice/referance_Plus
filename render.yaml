@@ -13,6 +13,8 @@ services:
       mountPath: /var/lib/mysql
       sizeGB: 1
     envVars:
+      - key: PORT
+        value: 3306
       - key: MYSQL_ROOT_PASSWORD
         generateValue: true
       - key: MYSQL_DATABASE
