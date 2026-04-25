@@ -7,11 +7,8 @@ services:
   - type: pserv
     name: stocky-db
     env: docker
+    dockerfilePath: ./Dockerfile.db
     plan: free
-    disk:
-      name: stocky-db-data
-      mountPath: /var/lib/mysql
-      sizeGB: 1
     envVars:
       - key: PORT
         value: 3306
@@ -27,23 +24,9 @@ services:
   # Application Laravel (Backend + Frontend)
   - type: web
     name: stocky-app
-    env: php
+    env: docker
+    dockerfilePath: ./Dockerfile.web
     plan: free
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader
-      npm ci
-      npm run production
-      php artisan key:generate --force
-      php artisan migrate --force
-      php artisan passport:install --force
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
-    startCommand: "apache2-foreground"
-    disk:
-      name: stocky-images
-      mountPath: /opt/render/project/src/public/images
-      sizeGB: 1
     envVars:
       - key: APP_NAME
         value: "Stocky POS"
