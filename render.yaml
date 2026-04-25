@@ -7,7 +7,6 @@ services:
   - type: pserv
     name: stocky-db
     env: docker
-    dockerfilePath: ./Dockerfile.db
     plan: free
     disk:
       name: stocky-db-data
