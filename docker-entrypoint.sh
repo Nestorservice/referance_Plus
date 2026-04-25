@@ -4,9 +4,14 @@ set -e
 echo "==> Stocky POS - Démarrage du serveur..."
 
 # Créer .env s'il n'existe pas
+# Créer .env s'il n'existe pas
 if [ ! -f /var/www/html/.env ]; then
-    echo "==> Création du fichier .env depuis .env.example..."
-    cp /var/www/html/.env.example /var/www/html/.env 2>/dev/null || true
+    echo "==> Création du fichier .env..."
+    if [ -f /var/www/html/.env.example ]; then
+        cp /var/www/html/.env.example /var/www/html/.env
+    else
+        touch /var/www/html/.env
+    fi
 fi
 
 # S'assurer que les variables d'environnement sont dans .env
