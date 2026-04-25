@@ -1,13 +1,4 @@
-# Stage 1: Build Frontend (PWA) avec Node 14 (Compatible avec l'ancien node-sass)
-FROM node:14 AS frontend
-WORKDIR /app
-# Désactivation du SSL strict car l'image Node 14 a des certificats racines obsolètes
-RUN npm config set strict-ssl false
-COPY . .
-RUN npm install --no-fund --no-audit
-RUN npm run production
-
-# Stage 2: Build Backend avec PHP 8.1
+# PHP 8.1 + Apache (assets frontend pré-compilés dans le repo)
 FROM php:8.1-apache
 
 # Installation des dépendances système
@@ -41,11 +32,8 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copie du code source backend
+# Copie du code source (inclut les assets JS pré-compilés)
 COPY . /var/www/html/
-
-# Copie des assets frontend pré-compilés depuis le Stage 1
-COPY --from=frontend /app/public /var/www/html/public
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
