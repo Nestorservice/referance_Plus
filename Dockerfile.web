@@ -48,7 +48,7 @@ RUN chown -R www-data:www-data /var/www/html \
 USER root
 RUN composer config audit.block-insecure false
 RUN composer install --no-dev --optimize-autoloader
-RUN npm ci && npm run production
+RUN npm install --no-fund --no-audit && npm run production
 
 # Script de démarrage pour lancer les migrations puis Apache
 RUN echo '#!/bin/bash\nphp artisan migrate --force\napache2-foreground' > /usr/local/bin/start.sh
