@@ -48,8 +48,8 @@ USER root
 RUN composer config audit.block-insecure false
 RUN composer install --no-dev --optimize-autoloader
 
-# Script de démarrage pour lancer les migrations puis Apache
-RUN echo '#!/bin/bash\nphp artisan migrate --force\napache2-foreground' > /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+# Script de démarrage robuste
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-CMD ["/usr/local/bin/start.sh"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
