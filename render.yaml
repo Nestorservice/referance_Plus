@@ -3,23 +3,6 @@
 # Configuration de déploiement pour Render.com
 
 services:
-  # Base de données MariaDB / MySQL
-  - type: pserv
-    name: stocky-db
-    env: docker
-    dockerfilePath: ./Dockerfile.db
-    plan: free
-    envVars:
-      - key: PORT
-        value: 3306
-      - key: MYSQL_ROOT_PASSWORD
-        generateValue: true
-      - key: MYSQL_DATABASE
-        value: stocky_pos
-      - key: MYSQL_USER
-        value: stocky_user
-      - key: MYSQL_PASSWORD
-        generateValue: true
 
   # Application Laravel (Backend + Frontend)
   - type: web
@@ -39,31 +22,21 @@ services:
       - key: APP_URL
         value: https://stocky-app.onrender.com
       
-      # Base de données
+      # Base de données (Aiven MySQL)
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
-        fromService:
-          name: stocky-db
-          type: pserv
-          property: host
+        value: stockydb-nestorcorneille-3ea7.i.aivencloud.com
       - key: DB_PORT
-        value: 3306
+        value: 16730
       - key: DB_DATABASE
-        fromService:
-          name: stocky-db
-          type: pserv
-          envVarKey: MYSQL_DATABASE
+        value: defaultdb
       - key: DB_USERNAME
-        fromService:
-          name: stocky-db
-          type: pserv
-          envVarKey: MYSQL_USER
+        value: avnadmin
       - key: DB_PASSWORD
-        fromService:
-          name: stocky-db
-          type: pserv
-          envVarKey: MYSQL_PASSWORD
+        sync: false # Render vous demandera le mot de passe dans le Dashboard
+      - key: MYSQL_ATTR_SSL_CA
+        value: "" # Active le SSL implicite requis par Aiven
 
       # PWA & WebPush
       - key: VAPID_PUBLIC_KEY
