@@ -31,6 +31,10 @@ php artisan migrate --force || echo "==> AVERTISSEMENT: Certaines migrations ont
 echo "==> Réinitialisation du mot de passe admin..."
 php artisan tinker --execute="\$user = \App\Models\User::where('email', 'admin@example.com')->first(); if(\$user) { \$user->password = bcrypt('admin123'); \$user->save(); }" || true
 
+# Installer Passport (générer les clés de sécurité pour l'API)
+echo "==> Installation de Laravel Passport..."
+php artisan passport:install --force || echo "==> AVERTISSEMENT: Passport n'a pas pu être installé."
+
 # Vider les caches
 echo "==> Nettoyage des caches..."
 php artisan config:clear
