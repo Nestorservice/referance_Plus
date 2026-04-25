@@ -1,18 +1,5 @@
-# --- Étape 1 : Build Node.js ---
-FROM node:16-bullseye AS node-build
-WORKDIR /app
-COPY package*.json ./
-# Forcer l'utilisation de sass (dart-sass) au lieu de node-sass
-RUN npm install --no-audit --no-fund
-COPY . .
-RUN npm run production
-
-# --- Étape 2 : Serveur PHP/Apache ---
+# PHP 8.1 + Apache (sans étape Node — le SW est enregistré directement dans le HTML)
 FROM php:8.1-apache
-
-# Configuration de l'environnement
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-WORKDIR /var/www/html
 
 # Installation des dépendances système
 RUN apt-get update && apt-get install -y \
@@ -26,39 +13,43 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libzip-dev \
     zip \
-    unzip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    unzip
 
-# Installation des extensions PHP
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
+# Nettoyage
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Activation de mod_rewrite
+# Configuration de l'extension GD
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
+# Extensions PHP nécessaires pour Laravel
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
+
+# Activation du module Rewrite d'Apache
 RUN a2enmod rewrite
 
-# Configuration d'Apache
+# Configuration de la racine Apache vers le dossier public de Laravel
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copie des fichiers depuis le repo
-COPY . .
-# Copie des assets compilés depuis l'étape 1
-COPY --from=node-build /app/public/js ./public/js
-COPY --from=node-build /app/public/css ./public/css
+# Copie du code source (inclut les assets JS pré-compilés)
+COPY . /var/www/html/
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer config audit.block-insecure false && \
-    composer install --no-dev --optimize-autoloader
 
-# Permissions
+# Permissions pour Apache
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Point d'entrée
+# Installation des dépendances PHP
+USER root
+RUN composer config audit.block-insecure false
+RUN composer install --no-dev --optimize-autoloader
+
+# Script de démarrage robuste
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 80
-ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

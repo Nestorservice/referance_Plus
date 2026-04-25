@@ -67,5 +67,16 @@
 
     <script src="/js/main.min.js?v=4.0.8"></script>
 
+    <!-- Enregistrement du Service Worker PWA (inline, sans dépendance au build Node) -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) { console.log('[PWA] SW enregistré:', reg.scope); })
+            .catch(function(err) { console.error('[PWA] Erreur SW:', err); });
+        });
+      }
+    </script>
+
   </body>
 </html>
