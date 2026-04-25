@@ -1,2 +1,4 @@
 FROM mariadb:10.5
 ENV MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
+EXPOSE 3306
+CMD ["mysqld", "--bind-address=0.0.0.0"]
