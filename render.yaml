@@ -1,0 +1,91 @@
+# render.yaml
+# Développé par OceanTechnologie
+# Configuration de déploiement pour Render.com
+
+services:
+  # Base de données MariaDB / MySQL
+  - type: pserv
+    name: stocky-db
+    env: docker
+    repo: https://github.com/MariaDB/mariadb-docker.git
+    branch: master
+    plan: free
+    disk:
+      name: stocky-db-data
+      mountPath: /var/lib/mysql
+      sizeGB: 1
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+      - key: MYSQL_DATABASE
+        value: stocky_pos
+      - key: MYSQL_USER
+        value: stocky_user
+      - key: MYSQL_PASSWORD
+        generateValue: true
+
+  # Application Laravel (Backend + Frontend)
+  - type: web
+    name: stocky-app
+    env: php
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      npm ci
+      npm run production
+      php artisan key:generate --force
+      php artisan migrate --force
+      php artisan passport:install --force
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: "apache2-foreground"
+    disk:
+      name: stocky-images
+      mountPath: /opt/render/project/src/public/images
+      sizeGB: 1
+    envVars:
+      - key: APP_NAME
+        value: "Stocky POS"
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://stocky-app.onrender.com
+      
+      # Base de données
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromService:
+          name: stocky-db
+          type: pserv
+          property: host
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        fromService:
+          name: stocky-db
+          type: pserv
+          envVarKey: MYSQL_DATABASE
+      - key: DB_USERNAME
+        fromService:
+          name: stocky-db
+          type: pserv
+          envVarKey: MYSQL_USER
+      - key: DB_PASSWORD
+        fromService:
+          name: stocky-db
+          type: pserv
+          envVarKey: MYSQL_PASSWORD
+
+      # PWA & WebPush
+      - key: VAPID_PUBLIC_KEY
+        generateValue: true
+      - key: VAPID_PRIVATE_KEY
+        generateValue: true
+      - key: VAPID_SUBJECT
+        value: "mailto:contact@oceantechnologie.com"
