@@ -10,19 +10,24 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY package*.json ./
 RUN npm install --no-audit --no-fund --legacy-peer-deps
 
-# Aligner les versions de Vue
+# Dépendances manquantes pour Mix 6
+RUN npm install postcss@^8.3.1 --save-dev --legacy-peer-deps
 RUN npm install vue@2.6.14 vue-template-compiler@2.6.14 --save-exact --legacy-peer-deps
+
+# PATCH: Remplacer webpackbar (qui crash avec des options ProgressPlugin invalides)
+# par un module vide qui ne fait rien
+RUN rm -rf node_modules/webpackbar && \
+    mkdir -p node_modules/webpackbar && \
+    echo '{"name":"webpackbar","version":"5.0.2","main":"index.js"}' > node_modules/webpackbar/package.json && \
+    echo "module.exports = class WebpackBar { constructor() {} apply() {} };" > node_modules/webpackbar/index.js
 
 COPY . .
 
-# Installer postcss (dépendance requise par Mix 6 mais pas listée dans package.json)
-RUN npm install postcss@^8.3.1 --save-dev --legacy-peer-deps
-
-# Appeler webpack DIRECTEMENT (contourne le CLI 'mix' qui échoue)
+# Build webpack direct
 RUN NODE_ENV=production node node_modules/webpack/bin/webpack.js --config=node_modules/laravel-mix/setup/webpack.config.js 2>&1 && echo "=== BUILD JS OK ===" || { echo "=== WEBPACK FAILED ==="; exit 1; }
 
 # Vérification
-RUN ls -la public/js/
+RUN ls -la public/js/ && echo "=== FILES OK ==="
 
 # --- Étape 2 : Serveur PHP/Apache ---
 FROM php:8.1-apache
