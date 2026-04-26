@@ -1,67 +1,49 @@
-# --- Étape 1 : Build Node.js (Node 14 pour compatibilité node-sass) ---
+# --- Étape 1 : Build Node.js ---
 FROM node:14-bullseye AS node-build
 WORKDIR /app
 
-# Installation des outils de build pour les modules natifs
+# Outils de build
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
-# On utilise --legacy-peer-deps pour les vieux projets
+# Installation propre
 RUN npm install --no-audit --no-fund --legacy-peer-deps
+
 COPY . .
-RUN npm run production
+# Build avec plus de mémoire et log détaillé
+RUN node --max-old-space-size=2048 ./node_modules/laravel-mix/bin/cli.js --production --progress
 
 # --- Étape 2 : Serveur PHP/Apache ---
 FROM php:8.1-apache
 
-# Configuration de l'environnement
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 WORKDIR /var/www/html
 
-# Installation des dépendances système
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
-    libicu-dev \
-    libzip-dev \
-    zip \
-    unzip \
+    git curl libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev libicu-dev libzip-dev zip unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Installation des extensions PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
 
-# Activation de mod_rewrite
 RUN a2enmod rewrite
-
-# Configuration d'Apache
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copie des fichiers depuis le repo
 COPY . .
-# Copie des assets compilés depuis l'étape 1 (y compris le dossier bundle)
+# Copie des assets compilés
 COPY --from=node-build /app/public/js ./public/js
 COPY --from=node-build /app/public/css ./public/css
 COPY --from=node-build /app/public/mix-manifest.json ./public/mix-manifest.json
 
-# Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer config audit.block-insecure false && \
     composer install --no-dev --optimize-autoloader
 
-# Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Point d'entrée
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
