@@ -12,8 +12,8 @@ COPY package*.json ./
 RUN npm install --no-audit --no-fund --legacy-peer-deps
 
 COPY . .
-# Build sans l'option --progress qui a causé une erreur
-RUN ./node_modules/laravel-mix/bin/cli.js --production
+# Retour à npm run production (maintenant que la mémoire est boostée, le PATH sera correct)
+RUN npm run production
 
 # --- Étape 2 : Serveur PHP/Apache ---
 FROM php:8.1-apache
