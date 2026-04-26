@@ -1,31 +1,12 @@
-# --- Étape 1 : Build Node.js ---
-FROM node:14-bullseye AS node-build
-WORKDIR /app
-
-# Outils de build
-RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
-
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-
-COPY package*.json ./
-# Installation propre avec legacy-peer-deps
-RUN npm install --no-audit --no-fund --legacy-peer-deps
-
-# Forcer la correspondance des versions de Vue
-RUN npm install vue@2.6.14 vue-template-compiler@2.6.14 --save-exact
-
-COPY . .
-# Utilisation du mode 'development' car 'production' semble trop lourd ou plante
-RUN npm run development -- --no-notification
-
-# --- Étape 2 : Serveur PHP/Apache ---
+# --- Serveur PHP/Apache ---
 FROM php:8.1-apache
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 WORKDIR /var/www/html
 
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev libicu-dev libzip-dev zip unzip \
+    git curl libpng-dev libjpeg-dev libfreetype6-dev \
+    libonig-dev libxml2-dev libicu-dev libzip-dev zip unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -36,10 +17,6 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 COPY . .
-# Copie des assets compilés (le manifest sera celui du mode dev)
-COPY --from=node-build /app/public/js ./public/js
-COPY --from=node-build /app/public/css ./public/css
-COPY --from=node-build /app/public/mix-manifest.json ./public/mix-manifest.json
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer config audit.block-insecure false && \

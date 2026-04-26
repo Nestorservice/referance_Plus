@@ -1,31 +1,26 @@
 const mix = require('laravel-mix');
-
-
-/*
- |--------------------------------------------------------------------------
- | Mix Asset Management
- |--------------------------------------------------------------------------
- |
- | Mix provides a clean, fluent API for defining some Webpack build steps
- | for your Laravel application. By default, we are compiling the Sass
- | file for the application as well as bundling up all the JS files.
- |
- */
-
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { ProgressPlugin } = require('webpack');
 
+// Patch: override ProgressPlugin pour éviter l'erreur de schéma
+const originalProgressPlugin = ProgressPlugin;
+require('webpack').ProgressPlugin = function (options) {
+    const safeOptions = {};
+    if (typeof options === 'function') return new originalProgressPlugin(options);
+    if (options && options.handler) safeOptions.handler = options.handler;
+    return new originalProgressPlugin(safeOptions);
+};
 
-mix.js('resources/src/main.js', 'public').js('resources/src/login.js', 'public')
+mix.js('resources/src/main.js', 'public')
+    .js('resources/src/login.js', 'public')
     .vue({ version: 2 });
 
 mix.webpackConfig({
     output: {
-        filename:'js/[name].min.js',
+        filename: 'js/[name].min.js',
         chunkFilename: 'js/bundle/[name].[hash].js',
     },
     plugins: [
         new MomentLocalesPlugin(),
     ]
 });
-
