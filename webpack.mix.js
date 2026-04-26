@@ -1,15 +1,6 @@
 const mix = require('laravel-mix');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
-const { ProgressPlugin } = require('webpack');
-
-// Patch: override ProgressPlugin pour éviter l'erreur de schéma
-const originalProgressPlugin = ProgressPlugin;
-require('webpack').ProgressPlugin = function (options) {
-    const safeOptions = {};
-    if (typeof options === 'function') return new originalProgressPlugin(options);
-    if (options && options.handler) safeOptions.handler = options.handler;
-    return new originalProgressPlugin(safeOptions);
-};
+const webpack = require('webpack');
 
 mix.js('resources/src/main.js', 'public')
     .js('resources/src/login.js', 'public')
@@ -22,5 +13,9 @@ mix.webpackConfig({
     },
     plugins: [
         new MomentLocalesPlugin(),
-    ]
+        // Désactiver les dynamic imports pour forcer tout dans un seul bundle
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1,
+        }),
+    ],
 });
