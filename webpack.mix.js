@@ -17,7 +17,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 
 mix.js('resources/src/main.js', 'public').js('resources/src/login.js', 'public')
-    .vue();
+    .vue({ version: 2 });
 
 mix.webpackConfig({
     output: {
