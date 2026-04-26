@@ -15,6 +15,9 @@ RUN npm install vue@2.6.14 vue-template-compiler@2.6.14 --save-exact --legacy-pe
 
 COPY . .
 
+# Installer postcss (dépendance requise par Mix 6 mais pas listée dans package.json)
+RUN npm install postcss@^8.3.1 --save-dev --legacy-peer-deps
+
 # Appeler webpack DIRECTEMENT (contourne le CLI 'mix' qui échoue)
 RUN NODE_ENV=production node node_modules/webpack/bin/webpack.js --config=node_modules/laravel-mix/setup/webpack.config.js 2>&1 && echo "=== BUILD JS OK ===" || { echo "=== WEBPACK FAILED ==="; exit 1; }
 
