@@ -3,30 +3,34 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
 
 class Sale extends Model
 {
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'date', 'Ref', 'is_pos', 'client_id', 'GrandTotal', 'qte_retturn', 'TaxNet', 'tax_rate', 'notes',
         'total_retturn', 'warehouse_id', 'user_id', 'statut', 'discount', 'shipping',
-        'paid_amount', 'payment_statut', 'created_at', 'updated_at', 'deleted_at','shipping_status'
+        'paid_amount', 'payment_statut', 'created_at', 'updated_at', 'deleted_at', 'shipping_status',
+        'tenant_id',
     ];
 
     protected $casts = [
-        'is_pos' => 'integer',
-        'GrandTotal' => 'double',
-        'qte_retturn' => 'double',
-        'total_retturn' => 'double',
-        'user_id' => 'integer',
-        'client_id' => 'integer',
-        'warehouse_id' => 'integer',
-        'discount' => 'double',
-        'shipping' => 'double',
-        'TaxNet' => 'double',
-        'tax_rate' => 'double',
-        'paid_amount' => 'double',
+        'is_pos'         => 'integer',
+        'GrandTotal'     => 'double',
+        'qte_retturn'    => 'double',
+        'total_retturn'  => 'double',
+        'user_id'        => 'integer',
+        'client_id'      => 'integer',
+        'warehouse_id'   => 'integer',
+        'discount'       => 'double',
+        'shipping'       => 'double',
+        'TaxNet'         => 'double',
+        'tax_rate'       => 'double',
+        'paid_amount'    => 'double',
+        'tenant_id'      => 'integer',
     ];
 
     public function user()
@@ -53,5 +57,4 @@ class Sale extends Model
     {
         return $this->belongsTo('App\Models\Warehouse');
     }
-
 }
