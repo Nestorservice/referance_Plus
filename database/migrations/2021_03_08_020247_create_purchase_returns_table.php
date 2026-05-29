@@ -17,7 +17,7 @@ class CreatePurchaseReturnsTable extends Migration {
 		{
 			$table->engine = 'InnoDB';
 			$table->integer('id', true);
-			$table->integer('user_id')->index('user_id_returns');
+			$table->integer('user_id')->index('user_id_purchase_returns');
 			$table->date('date');
 			$table->string('Ref', 192);
 			$table->integer('provider_id')->index('provider_id_return');
