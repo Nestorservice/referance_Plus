@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Purchase extends Model
 {
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'date', 'Ref', 'provider_id', 'warehouse_id', 'GrandTotal',
         'discount', 'shipping', 'statut', 'notes', 'TaxNet', 'tax_rate', 'paid_amount',
-        'payment_statut', 'created_at', 'updated_at', 'deleted_at',
+        'payment_statut', 'created_at', 'updated_at',
+            'tenant_id',
     ];
 
     protected $casts = [

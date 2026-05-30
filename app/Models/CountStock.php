@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class CountStock extends Model
 {
+    use HasFactory, BelongsToTenant;
+
     protected $table = 'count_stock';
 
-    protected $dates = ['deleted_at'];
-
     protected $fillable = [
-        'date','user_id', 'warehouse_id','file_stock'
+        'date','user_id', 'warehouse_id','file_stock',
+            'tenant_id',
     ];
 
     protected $casts = [

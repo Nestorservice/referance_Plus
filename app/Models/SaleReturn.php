@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class SaleReturn extends Model
 {
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'date', 'Ref', 'GrandTotal',
         'user_id', 'discount', 'shipping',
         'warehouse_id', 'client_id','sale_id', 'notes', 'TaxNet', 'tax_rate', 'statut',
-        'paid_amount', 'payment_statut', 'created_at', 'updated_at', 'deleted_at',
+        'paid_amount', 'payment_statut', 'created_at', 'updated_at',
+            'tenant_id',
     ];
 
     protected $casts = [

@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class TransferMoney extends Model
 {
+    use HasFactory, BelongsToTenant;
+
     protected $table = 'transfer_money';
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'date','from_account_id', 'to_account_id','amount','created_at', 'updated_at', 'deleted_at',
+        'date','from_account_id', 'to_account_id','amount','created_at', 'updated_at',
+            'tenant_id',
     ];
 
     protected $casts = [

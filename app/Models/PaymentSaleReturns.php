@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PaymentSaleReturns extends Model
 {
-    use SoftDeletes;
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
-        'sale_return_id', 'date', 'montant','change', 'Ref', 'Reglement', 'user_id', 'notes','account_id'
+        'sale_return_id', 'date', 'montant','change', 'Ref', 'Reglement', 'user_id', 'notes','account_id',
+            'tenant_id',
     ];
 
     protected $casts = [

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,11 +11,9 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $dates = ['deleted_at'];
-
     protected $fillable = [
-        'title','project_id','start_date','end_date','company_id','description','status'
-
+        'title','project_id','start_date','end_date','company_id','description','status',
+            'tenant_id',
     ];
 
     protected $casts = [

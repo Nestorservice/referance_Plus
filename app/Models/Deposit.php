@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Deposit extends Model
 {
 
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'user_id','account_id','deposit_category_id','amount','date','deposit_ref','description',
-        'created_at', 'updated_at', 'deleted_at',
+        'created_at', 'updated_at',
+            'tenant_id',
     ];
 
     protected $casts = [

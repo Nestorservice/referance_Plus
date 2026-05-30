@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Provider extends Model
 {
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
-        'name', 'code', 'adresse', 'phone', 'country', 'email', 'city','tax_number'
+        'name', 'code', 'adresse', 'phone', 'country', 'email', 'city','tax_number',
+            'tenant_id',
     ];
 
     protected $casts = [

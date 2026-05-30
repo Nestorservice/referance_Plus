@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
 
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'code', 'Type_barcode', 'name', 'cost', 'price', 'unit_id', 'unit_sale_id', 'unit_purchase_id',
         'stock_alert', 'category_id', 'sub_category_id', 'is_variant','is_imei',
-        'tax_method', 'image', 'brand_id', 'is_active', 'note','type'
+        'tax_method', 'image', 'brand_id', 'is_active', 'note','type',
+            'tenant_id',
     ];
 
     protected $casts = [

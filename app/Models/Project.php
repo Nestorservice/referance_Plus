@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,12 +11,10 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $dates = ['deleted_at'];
-
     protected $fillable = [
         'title','client_id','company_id','summary','start_date','end_date','status',
-        'description'
-
+        'description',
+            'tenant_id',
     ];
 
     protected $casts = [

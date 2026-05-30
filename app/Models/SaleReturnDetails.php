@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class SaleReturnDetails extends Model
 {
 
+    use HasFactory, BelongsToTenant;
+
     protected $fillable = [
         'id', 'product_id', 'sale_return_id','sale_unit_id', 'total', 'quantity', 'product_variant_id',
         'price', 'TaxNet', 'discount', 'discount_method', 'tax_method',
+            'tenant_id',
     ];
 
     protected $casts = [

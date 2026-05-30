@@ -2,13 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class ExpenseCategory extends Model
 {
 
+    use HasFactory, BelongsToTenant;
+
     protected $fillable = [
-        'user_id', 'description', 'name', 'created_at', 'updated_at', 'deleted_at',
+        'user_id', 'description', 'name', 'created_at', 'updated_at',
+            'tenant_id',
     ];
 
     protected $casts = [

@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'date', 'user_id', 'expense_category_id', 'warehouse_id', 'details','account_id',
-        'amount', 'Ref', 'created_at', 'updated_at', 'deleted_at',
+        'amount', 'Ref', 'created_at', 'updated_at',
+            'tenant_id',
     ];
 
     protected $casts = [

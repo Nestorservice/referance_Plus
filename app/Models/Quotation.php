@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Quotation extends Model
 {
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'date', 'Ref', 'client_id', 'GrandTotal', 'warehouse_id', 'user_id', 'statut',
-        'notes', 'discount', 'shipping', 'TaxNet', 'tax_rate', 'created_at', 'updated_at', 'deleted_at',
+        'notes', 'discount', 'shipping', 'TaxNet', 'tax_rate', 'created_at', 'updated_at',
+            'tenant_id',
     ];
 
     protected $casts = [

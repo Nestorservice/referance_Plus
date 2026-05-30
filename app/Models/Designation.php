@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,10 +11,9 @@ class Designation extends Model
 {
     use HasFactory;
 
-    protected $dates = ['deleted_at'];
-
     protected $fillable = [
-        'designation','department_id','company_id'
+        'designation','department_id','company_id',
+            'tenant_id',
     ];
 
     protected $casts = [

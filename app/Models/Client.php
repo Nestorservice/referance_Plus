@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
 
-    protected $dates = ['deleted_at'];
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
-        'name', 'code', 'adresse', 'email', 'phone', 'country', 'city','tax_number'
-
+        'name', 'code', 'adresse', 'email', 'phone', 'country', 'city','tax_number',
+            'tenant_id',
     ];
 
     protected $casts = [

@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 
 class EcommerceClient extends Model implements Authenticatable
 {
+    use HasFactory, BelongsToTenant;
     use AuthenticatableTrait;
 
-    protected $dates = ['deleted_at'];
-
     protected $fillable = [
-        'client_id', 'username', 'email', 'status','password'
-
+        'client_id', 'username', 'email', 'status','password',
+            'tenant_id',
     ];
 
     protected $hidden = [

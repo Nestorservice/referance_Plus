@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
 
+    use HasFactory, BelongsToTenant;
+
     protected $fillable = [
         'currency_id', 'email', 'CompanyName', 'CompanyPhone', 'CompanyAdress','quotation_with_stock',
          'logo','footer','developed_by','client_id','warehouse_id','default_language','show_language',
          'is_invoice_footer','invoice_footer',
+            'tenant_id',
     ];
 
     protected $casts = [

@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Model;
 
 class PurchaseDetail extends Model
 {
 
+    use HasFactory, BelongsToTenant;
+
     protected $fillable = [
         'id', 'purchase_id','purchase_unit_id', 'quantity', 'product_id', 'total', 'product_variant_id',
         'cost', 'TaxNet', 'discount', 'discount_method', 'tax_method',
+            'tenant_id',
     ];
 
     protected $casts = [

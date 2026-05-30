@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,13 +11,12 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $dates = ['deleted_at'];
-
     protected $fillable = [
         'id','firstname','lastname','username','email','gender','phone','remaining_leave','total_leave',
         'birth_date','department_id','designation_id','office_shift_id','joining_date',
         'leaving_date','marital_status','employment_type','city','province','zipcode','address','resume','avatar','document',
-        'country','company_id','facebook','skype','whatsapp','twitter','linkedin','hourly_rate','basic_salary'
+        'country','company_id','facebook','skype','whatsapp','twitter','linkedin','hourly_rate','basic_salary',
+            'tenant_id',
     ];
 
     protected $casts = [
