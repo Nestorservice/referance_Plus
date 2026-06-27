@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    image: stocky-app:latest
+    container_name: stocky_web
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      # Persistent storage for uploads, logs, and framework files
+      - ./storage:/var/www/html/storage
+      # Inject production .env configuration
+      - ./.env:/var/www/html/.env
