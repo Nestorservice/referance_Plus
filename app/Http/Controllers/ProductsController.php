@@ -41,8 +41,8 @@ class ProductsController extends BaseController
         $pageStart = \Request::get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
-        $order = $request->SortField;
-        $dir = $request->SortType;
+        $order = $request->SortField ? $request->SortField : 'id';
+        $dir = $request->SortType ? $request->SortType : 'desc';
         $helpers = new helpers();
         // Filter fields With Params to retrieve
         $columns = array(0 => 'name', 1 => 'category_id', 2 => 'brand_id', 3 => 'code');

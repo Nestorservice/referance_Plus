@@ -8,7 +8,7 @@ mix.js('resources/src/main.js', 'public')
 mix.webpackConfig({
     output: {
         filename: 'js/[name].min.js',
-        chunkFilename: 'js/bundle/[name].[hash].js',
+        chunkFilename: 'js/bundle/[name].js',
     },
     plugins: [
         new MomentLocalesPlugin(),

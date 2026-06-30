@@ -5,10 +5,10 @@
  * v2 — Force cache refresh after rebuild
  */
 
-const CACHE_NAME = 'stocky-cache-v2';
-const API_CACHE_NAME = 'stocky-api-cache-v2';
+const CACHE_NAME = 'stocky-cache-v3';
+const API_CACHE_NAME = 'stocky-api-cache-v3';
 
-// Assets statiques à pré-cacher (PAS les JS bundles)
+// Assets statiques à pré-cacher
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -17,6 +17,18 @@ const STATIC_ASSETS = [
   '/images/icons/icon-192x192.png',
   '/images/icons/icon-512x512.png',
   '/css/master.css',
+  '/js/main.min.js',
+  '/js/bundle/largeSidebar.js',
+  '/js/bundle/dashboard.js',
+  '/js/bundle/pos.js',
+  '/js/bundle/products.js',
+  '/js/bundle/index_products.js',
+  '/js/bundle/store_product.js',
+  '/js/bundle/edit_product.js',
+  '/js/bundle/detail_product.js',
+  '/js/bundle/Categories.js',
+  '/js/bundle/NotFound.js',
+  '/js/bundle/not_authorize.js',
 ];
 
 // Routes API critiques (NetworkFirst)
@@ -41,7 +53,7 @@ const API_STALE_ROUTES = [
 
 // ================ INSTALLATION ================
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installation du Service Worker Stocky v2...');
+  console.log('[SW] Installation du Service Worker Stocky v3...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -58,7 +70,7 @@ self.addEventListener('install', (event) => {
 
 // ================ ACTIVATION ================
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activation du Service Worker Stocky v2...');
+  console.log('[SW] Activation du Service Worker Stocky v3...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
